@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Clayton Kershaw ERA (2008- 2018)</title>
+	
+	
+	    <style>
+
+		h2{
+			text-align: center;
+			font-family: 'Krub', sans-serif;
+		}
+		svg{
+		margin-left: auto;
+		margin-right: auto;
+		display: block
+		}
+		p{
+			max-width: 500px;
+			margin-left: auto;
+			margin-right: auto;
+			font-family: 'Krub', sans-serif;
+		}
+
+		#data-source{
+			margin-right: auto;
+			margin-left: 0;
+			font-size: 10px;
+			margin-top: 10px;
+			font-family: 'Krub', sans-serif;
+		}
+		
+			.dot {
+				opacity: 0.5;
+				fill: grey;
+    }
+    
+			line {
+				fill: none;
+				stroke: grey;
+				stroke-width: 1px;
+				shape-rendering: crispEdges;
+			}
+			
+    </style>
+	
+	
+	
+</head>
+<body>
+	<h2>Clayton Kershaw ERA (2008- 2018)</h2>
+	<div id="chart"></div>
+	<p>A look at Dodgers ace Clayton Kershaw's Earned Run Average (ERA) from 2008 to 2018. </p>
+
+	
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script type="text/javascript">
+
+var margin = {top:50, right:20, bottom:70, left:70},
+    width  = 700 - margin.left - margin.right,
+    height = 450 - margin.top - margin.bottom;
+
+// parse the date / time
+var parseDate = d3.timeParse("%Y");
+
+
+//Note: If your x scale is not time data, then you'll want to use
+// d3.scalePoint() instead for your x variable below
+
+//set the scales based on time
+var x = d3.scaleTime().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+
+
+
+var line = d3.line()
+    .x(function(d) { return x(d.Year); })
+    .y(function(d) { return y(d.ERA); })
+    .curve(d3.curveMonotoneX);
+    //For examples of different curve styles, see:
+    // https://bl.ocks.org/d3noob/ced1b9b18bd8192d2c898884033b5529
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+
+var chart = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("kershaw - Sheet1.csv").then(function(data) {
+
+    data.forEach(function(d) {
+        d.Year = parseDate(d.Year); //parseDate(d.Year);
+        d.ERA = +d["ERA"];
+    });
+	
+	
+    x.domain(d3.extent(data, function(d) { return d.Year; }));
+    y.domain([0, d3.max(data, function(d) { return d.ERA; })]);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(" + margin.left + "," + (height + margin.top) + ")")
+        .call(d3.axisBottom(x));
+
+    svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .call(d3.axisLeft(y))
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Clayton Kershaw's ERA");
+
+
+//	
+//	var data2 = [
+//		{Year: parseDate(2008), ERA: 0},
+//		{Year: parseDate(2009), ERA: 0},
+//		{Year: parseDate(2010), ERA: 0},
+//		{Year: parseDate(2011), ERA: 0},
+//		{Year: parseDate(2012), ERA: 0},
+//		{Year: parseDate(2013), ERA: 0},
+//		{Year: parseDate(2014), ERA: 0},
+//		{Year: parseDate(2015), ERA: 0},
+//		{Year: parseDate(2016), ERA: 0},
+//		{Year: parseDate(2017), ERA: 0},
+//		{Year: parseDate(2018), ERA: 0}
+//	];
+
+    var line_on_chart = chart.append("path")
+        .datum(data)
+        .attr("class", "line")
+        .attr("d", line)
+        .style("stroke","steelblue")
+        .style("stroke-width","2px")
+        .style("fill","none");
+
+
+//    svg.on("click", function(){
+//      path      
+//        .transition()
+//        .duration(2000)
+//        .ease("linear")
+//        .attr("stroke-dashoffset", totalLength);
+//    })
+
+//	
+//	    g.append("path")
+//      	.datum(data)
+//      	.attr("fill", "none")
+//      	.attr("stroke", "steelblue")
+//      	.attr("stroke-linejoin", "round")
+//      	.attr("stroke-linecap", "round")
+//      	.attr("stroke-width", 1.5)
+//      	.attr("d", line);
+//      
+
+	
+	
+});
+</script>
+		<p id="data-source">Major League Baseball</p>
+
+</body>
+</html>
+	
